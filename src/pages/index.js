@@ -24,7 +24,7 @@ export default class IndexPage extends React.Component {
                 >
                   <p>
                     <Link className="has-text-primary" to={post.fields.slug}>
-                      {post.frontmatter.title}
+                      {post.frontmatter.postTitle}
                     </Link>
                     <span> &bull; </span>
                     <small>{post.frontmatter.date}</small>
@@ -58,7 +58,7 @@ export const pageQuery = graphql`
   query IndexQuery {
     allMarkdownRemark(
       sort: { order: DESC, fields: [frontmatter___date] },
-      filter: { frontmatter: { templateKey: { eq: "blog-post" } }}
+      filter: { frontmatter: { templateKey: { eq: "news-post" } }}
     ) {
       edges {
         node {
@@ -68,9 +68,9 @@ export const pageQuery = graphql`
             slug
           }
           frontmatter {
-            title
+            postTitle
             templateKey
-            date(formatString: "MMMM DD, YYYY")
+            date(formatString: "YYYY/MM/DD")
           }
         }
       }

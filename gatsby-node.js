@@ -1,13 +1,43 @@
 const _ = require('lodash')
 const path = require('path')
+const createPaginatedPages = require('gatsby-paginate')
 const { createFilePath } = require('gatsby-source-filesystem')
 const { fmImagesToRelative } = require('gatsby-remark-relative-images')
+
+exports.onCreateNode = ({ node, actions, getNode }) => {
+  const { createNodeField } = actions
+  fmImagesToRelative(node) // convert image paths for gatsby images
+
+  if (node.internal.type === `MarkdownRemark`) {
+    const value = createFilePath({ node, getNode })
+    createNodeField({
+      name: `slug`,
+      node,
+      value,
+    })
+  }
+}
 
 exports.createPages = ({ actions, graphql }) => {
   const { createPage } = actions
 
   return graphql(`
     {
+      newsPagination: allMarkdownRemark (filter: {frontmatter: {templateKey: {eq: "news-post"}}}) {
+        edges {
+          node {
+            id
+            fields {
+              slug
+            }
+            frontmatter {
+              tags
+              templateKey
+              postTitle
+            }
+          }
+        }
+      }
       allMarkdownRemark(limit: 1000) {
         edges {
           node {
@@ -29,6 +59,15 @@ exports.createPages = ({ actions, graphql }) => {
       return Promise.reject(result.errors)
     }
 
+    createPaginatedPages({
+      edges: result.data.newsPagination.edges,
+      createPage: createPage,
+      pageTemplate: 'src/templates/news-pagination.js',
+      pageLength: 3,
+      pathPrefix: 'news',
+      context: {},
+    })
+
     const posts = result.data.allMarkdownRemark.edges
 
     posts.forEach(edge => {
@@ -39,7 +78,6 @@ exports.createPages = ({ actions, graphql }) => {
         component: path.resolve(
           `src/templates/${String(edge.node.frontmatter.templateKey)}.js`
         ),
-        // additional data can be passed via context
         context: {
           id,
         },
@@ -57,9 +95,8 @@ exports.createPages = ({ actions, graphql }) => {
     // Eliminate duplicate tags
     tags = _.uniq(tags)
 
-    // Make tag pages
     tags.forEach(tag => {
-      const tagPath = `/tags/${_.kebabCase(tag)}/`
+      const tagPath = `news/tags/${_.kebabCase(tag)}/`
 
       createPage({
         path: tagPath,
@@ -70,18 +107,4 @@ exports.createPages = ({ actions, graphql }) => {
       })
     })
   })
-}
-
-exports.onCreateNode = ({ node, actions, getNode }) => {
-  const { createNodeField } = actions
-  fmImagesToRelative(node) // convert image paths for gatsby images
-
-  if (node.internal.type === `MarkdownRemark`) {
-    const value = createFilePath({ node, getNode })
-    createNodeField({
-      name: `slug`,
-      node,
-      value,
-    })
-  }
 }
