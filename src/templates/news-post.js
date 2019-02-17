@@ -5,12 +5,14 @@ import Helmet from 'react-helmet'
 import { graphql, Link } from 'gatsby'
 import Layout from '../components/Layout'
 import Content, { HTMLContent } from '../components/Content'
+import PreviewCompatibleImage from "../components/PreviewCompatibleImage"
 
 export const NewsPostTemplate = ({
   content,
   contentComponent,
   tags,
   postTitle,
+  thubmnail,
   helmet,
 }) => {
   const PostContent = contentComponent || Content
@@ -24,6 +26,7 @@ export const NewsPostTemplate = ({
             <h1 className="title is-size-2 has-text-weight-bold is-bold-light">
               {postTitle}
             </h1>
+            <PreviewCompatibleImage imageInfo={thubmnail} />
             {tags && tags.length ? (
               <ul className="taglist">
                 {tags.map(tag => (
@@ -45,12 +48,13 @@ NewsPostTemplate.propTypes = {
   content: PropTypes.node.isRequired,
   contentComponent: PropTypes.func,
   postTitle: PropTypes.string,
+  thubmnail: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   helmet: PropTypes.object,
 }
 
 const NewsPost = ({ data }) => {
   const { markdownRemark: post } = data
-
+  console.log(post)
   return (
     <Layout>
       <NewsPostTemplate
@@ -65,6 +69,7 @@ const NewsPost = ({ data }) => {
         }
         tags={post.frontmatter.tags}
         postTitle={post.frontmatter.postTitle}
+        thubmnail={post.frontmatter.thubmnail}
       />
     </Layout>
   )
@@ -86,6 +91,16 @@ export const pageQuery = graphql`
       frontmatter {
         date(formatString: "YYYY/MM/DD")
         postTitle
+        thubmnail {
+          image {
+            childImageSharp {
+              fluid(maxWidth: 2048, quality: 100) {
+                ...GatsbyImageSharpFluid
+              }
+            }
+          }
+          alt
+        }
         tags
       }
     }
