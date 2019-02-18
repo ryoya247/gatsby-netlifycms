@@ -6,7 +6,7 @@ const { fmImagesToRelative } = require('gatsby-remark-relative-images')
 
 exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions
-  fmImagesToRelative(node) // convert image paths for gatsby images
+  fmImagesToRelative(node)
 
   if (node.internal.type === `MarkdownRemark`) {
     const value = createFilePath({ node, getNode })
@@ -82,15 +82,14 @@ exports.createPages = ({ actions, graphql }) => {
       })
     })
 
-    // Tag pages:
     let tags = []
-    // Iterate through each post, putting all found tags into `tags`
+
     posts.forEach(edge => {
       if (_.get(edge, `node.frontmatter.tags`)) {
         tags = tags.concat(edge.node.frontmatter.tags)
       }
     })
-    // Eliminate duplicate tags
+
     tags = _.uniq(tags)
 
     tags.forEach(tag => {

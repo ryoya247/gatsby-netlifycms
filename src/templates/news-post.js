@@ -12,11 +12,10 @@ export const NewsPostTemplate = ({
   contentComponent,
   tags,
   postTitle,
-  thubmnail,
+  thumbnail,
   helmet,
 }) => {
   const PostContent = contentComponent || Content
-
   return (
     <section className="section">
       {helmet || ''}
@@ -26,7 +25,7 @@ export const NewsPostTemplate = ({
             <h1 className="title is-size-2 has-text-weight-bold is-bold-light">
               {postTitle}
             </h1>
-            <PreviewCompatibleImage imageInfo={thubmnail} />
+            <PreviewCompatibleImage imageInfo={thumbnail} />
             {tags && tags.length ? (
               <ul className="taglist">
                 {tags.map(tag => (
@@ -48,13 +47,12 @@ NewsPostTemplate.propTypes = {
   content: PropTypes.node.isRequired,
   contentComponent: PropTypes.func,
   postTitle: PropTypes.string,
-  thubmnail: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+  thumbnail: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   helmet: PropTypes.object,
 }
 
 const NewsPost = ({ data }) => {
   const { markdownRemark: post } = data
-  console.log(post)
   return (
     <Layout>
       <NewsPostTemplate
@@ -69,7 +67,7 @@ const NewsPost = ({ data }) => {
         }
         tags={post.frontmatter.tags}
         postTitle={post.frontmatter.postTitle}
-        thubmnail={post.frontmatter.thubmnail}
+        thumbnail={post.frontmatter.thumbnail}
       />
     </Layout>
   )
@@ -91,7 +89,7 @@ export const pageQuery = graphql`
       frontmatter {
         date(formatString: "YYYY/MM/DD")
         postTitle
-        thubmnail {
+        thumbnail {
           image {
             childImageSharp {
               fluid(maxWidth: 2048, quality: 100) {

@@ -2,7 +2,7 @@
 templateKey: news-post
 title: testpostnews
 postTitle: News Post Test
-thubmnail:
+thumbnail:
   image: /img/coffee.png
   alt: alttext
 date: 2019-02-18T20:30:44.000Z
