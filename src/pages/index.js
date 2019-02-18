@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link, graphql } from 'gatsby'
 import Layout from '../components/Layout'
+import PreviewCompatibleImage from '../components/PreviewCompatibleImage'
 
 export default class IndexPage extends React.Component {
   render() {
@@ -19,7 +20,6 @@ export default class IndexPage extends React.Component {
               .map(({ node: post }) => (
                 <div
                   className="content"
-                  style={{ border: '1px solid #333', padding: '2em 4em' }}
                   key={post.id}
                 >
                   <p>
@@ -29,12 +29,11 @@ export default class IndexPage extends React.Component {
                     <span> &bull; </span>
                     <small>{post.frontmatter.date}</small>
                   </p>
+                  <p>{post.excerpt}</p>
+                  <PreviewCompatibleImage imageInfo={post.frontmatter.thumbnail} imageStyle={{width: `200px`}}/>
                   <p>
-                    {post.excerpt}
-                    <br />
-                    <br />
                     <Link className="button is-small" to={post.fields.slug}>
-                      Keep Reading →
+                      記事を見る →
                     </Link>
                   </p>
                 </div>
@@ -59,6 +58,7 @@ export const pageQuery = graphql`
     allMarkdownRemark(
       sort: { order: DESC, fields: [frontmatter___date] },
       filter: { frontmatter: { templateKey: { eq: "news-post" } }}
+      limit: 5
     ) {
       edges {
         node {
@@ -70,7 +70,17 @@ export const pageQuery = graphql`
           frontmatter {
             postTitle
             templateKey
-            date(formatString: "YYYY/MM/DD")
+            thumbnail {
+              image {
+                childImageSharp  {
+                  fluid(maxWidth: 200, quality: 100) {
+                    ...GatsbyImageSharpFluid
+                  }
+                }
+              }
+              alt
+            }
+            date(formatString: "YYYY / MM / DD")
           }
         }
       }

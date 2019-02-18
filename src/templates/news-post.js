@@ -25,7 +25,7 @@ export const NewsPostTemplate = ({
             <h1 className="title is-size-2 has-text-weight-bold is-bold-light">
               {postTitle}
             </h1>
-            <PreviewCompatibleImage imageInfo={thumbnail} />
+            <PreviewCompatibleImage imageInfo={thumbnail} imageStyle={{width: `400px`}}/>
             {tags && tags.length ? (
               <ul className="taglist">
                 {tags.map(tag => (
